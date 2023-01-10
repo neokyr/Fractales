@@ -11,12 +11,12 @@ endif
 
 VALGRIND_CHECK ?= 0
 ifeq ($(VALGRIND_CHECK), 1)
-	FLAGS += -g
+	FLAGS += -g3
 endif
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
-	FLAGS+= -g3
+	FLAGS+= -g3 -fsanitize=address
 endif
 
 
