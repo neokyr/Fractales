@@ -24,32 +24,32 @@ int main(int argc, char **argv)
 		}
 		if(h <= mode.h && w <= mode.w)
 		{
-			if(strcmp(argv[3], "Mandelbrot") == 0)
+			//cette partie reste à modifier
+			if(strcmp(argv[3], "Mandelbrot") == 0 || strcmp(argv[3], "Julia") == 0)
 			{
-				SDL_Window *window = SDL_CreateWindow("MANNY!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, h, w, 0);
+				SDL_Window *window = SDL_CreateWindow("MANNY!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, 0);
 				if(!window)
 				{
 					return print_error(ERROR_SDL_WINDOW_NULL);
 				}
 				SDL_UpdateWindowSurface(window);
+				/*
+				bool keep_window_open = true;
+				while(keep_window_open)
+				{
+					SDL_Event e;
+					while(SDL_PollEvent(&e) > 0)
+					{
+						
+					}
+				}
+				*/
+				//à "remplacer" par l'event handler
 				SDL_Delay(5000);
 			}
 			else
 			{
-				if(strcmp(argv[3], "Julia") == 0)
-				{
-					SDL_Window *window = SDL_CreateWindow("JUJU!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, h, w, 0);
-					if(!window)
-					{
-						return print_error(ERROR_SDL_WINDOW_NULL);
-					}
-					SDL_UpdateWindowSurface(window);
-					SDL_Delay(5000);
-					}
-				else
-				{
-					return print_error(ERROR_INCORRECT_TYPE);
-				}
+				return print_error(ERROR_INCORRECT_TYPE);
 			}
 			//fin de la partie potentiellement transférée
 		}
