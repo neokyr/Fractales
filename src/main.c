@@ -3,30 +3,38 @@
 
 int main(int argc, char **argv)
 {
+	
 	if(argc== 4)
 	{
-		if(strcmp(argv[3], "Mandelbrot") == 0)
+		if(true)
 		{
-			printf("manny!\n");
-		}
-		else
-		{
-			if(strcmp(argv[3], "Julia") == 0)
+			if(strcmp(argv[3], "Mandelbrot") == 0)
 			{
-				printf("juju!\n");
+				printf("manny!\n");
 			}
 			else
 			{
-				printf("Les deux noms de fractales valides sont 'Mandelbrot' et 'Julia'\n");
-				return 1;
+				if(strcmp(argv[3], "Julia") == 0)
+				{
+					printf("juju!\n");
+				}
+				else
+				{
+					printf("Les deux noms de fractales valides sont 'Mandelbrot' et 'Julia'\n");
+					return 1;
+				}
 			}
+		}
+		else
+		{
+			printf("Dimensions incorrectes!")
+			return 1;
 		}
 	}
 	else
 	{
-		printf("non\n");
+		printf("Mauvais nombre d'arguments!\n");
 		return 1;
 	}
-	
 	return 0;
 }
