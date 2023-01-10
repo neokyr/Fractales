@@ -4,11 +4,13 @@
 
 #include "../include/fractal.h"
 #include "../include/screen_handling.h"
+#include "../include/error.h"
 #include <stdbool.h>
 
 
-int fractals(SDL_Window *pWindow, t_range range, t_colors colors, t_complex z0, bool isMandelbrot) {
+int fractals(SDL_Window *pWindow, t_range range, t_colors colors) {
     SDL_Surface* window_surface = SDL_GetWindowSurface(pWindow);
+    if(window_surface == NULL) return print_error(ERROR_SDL_NO_SURFACE);
     double yIncrement = (range.maxY - range.minY) / (double) window_surface->h;
     double xIncrement = (range.maxX - range.minX) / (double) window_surface->w;
 
@@ -31,7 +33,7 @@ int fractals(SDL_Window *pWindow, t_range range, t_colors colors, t_complex z0, 
     return 0;
 }
 
-int solve(t_complex c, t_range range, t_colors colors, t_complex z0) {
+uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0) {
     int i;
     t_complex z = z0;
     for (i = 0; i < range.maxIter; ++i) {
