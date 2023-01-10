@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 
-int fractals(SDL_Window *pWindow, t_range range, t_colors colors, t_complex z_0, bool isMandelbrot) {
+int fractals(SDL_Window *pWindow, t_range range, t_colors colors, t_complex z0, bool isMandelbrot) {
     SDL_Surface* window_surface = SDL_GetWindowSurface(pWindow);
     double yIncrement = (range.maxY - range.minY) / (double) window_surface->h;
     double xIncrement = (range.maxX - range.minX) / (double) window_surface->w;
@@ -21,20 +21,22 @@ int fractals(SDL_Window *pWindow, t_range range, t_colors colors, t_complex z_0,
             curr.img =y;
 
             // Formula is Zn+1 = Zn^2 + c
-            if(isMandelbrot) // Mandelbrot has a fixed z_0 and changing c
-                put_pixel(window_surface->pixels, j, i, solve(curr, range, colors, z_0));
+            if(range.isMandelbrot) // Mandelbrot has a fixed z_0 and changing c
+                put_pixel(window_surface->pixels, j, i, solve(curr, range, colors, range.unchanging));
             else // Julia has a fixed c and changing z_0
-                put_pixel(window_surface->pixels, j, i, solve(z_0, range, colors, curr));
+                put_pixel(window_surface->pixels, j, i, solve(range.unchanging, range, colors, curr));
         }
     }
+
+    return 0;
 }
 
-int solve(t_complex complex, t_range range, t_colors colors, t_complex z_0) {
+int solve(t_complex c, t_range range, t_colors colors, t_complex z0) {
     int i;
-    t_complex z = z_0;
+    t_complex z = z0;
     for (i = 0; i < range.maxIter; ++i) {
-        z.real = square(z).real + complex.real;
-        z.img = square(z).img + complex.img;
+        z.real = square(z).real + c.real;
+        z.img = square(z).img + c.img;
 
         if(fabs(z.real + z.img) > range.maxDeviation) break;
     }
