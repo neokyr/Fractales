@@ -4,7 +4,6 @@
 
 int main(int argc, char **argv)
 {
-	
 	if(argc == 4)
 	{
 		if(SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -12,10 +11,18 @@ int main(int argc, char **argv)
 			printf("Failed to initialize the SDL2 library\n");
 			return -1;
 		}
+		
 		SDL_DisplayMode mode;
 		SDL_GetDesktopDisplayMode(0, &mode);
-		int h = atoi(argv[1]);
-		int w = atoi(argv[2]);
+		char * endPtrH;
+		char * endPtrW;
+		int h = (int) strtol(argv[1], &endPtrH, 10);
+		int w = (int) strtol(argv[2], &endPtrW, 10);
+		if(strcmp(endPtrH, "") != 0 || strcmp(endPtrW, "") != 0)
+		{
+			printf("Pas de lettres dans les dimensions de la fenetre, merci.\n");
+			return -1;
+		}
 		if(h <= mode.h && w <= mode.w)
 		{
 			//cette partie devra potentiellement être transférée dans une autre fonction.
@@ -46,7 +53,7 @@ int main(int argc, char **argv)
 				else
 				{
 					printf("Les deux noms de fractales valides sont 'Mandelbrot' et 'Julia'\n");
-					return 1;
+					return -1;
 				}
 			}
 			//fin de la partie potentiellement transférée
@@ -54,13 +61,13 @@ int main(int argc, char **argv)
 		else
 		{
 			printf("Dimensions incorrectes!\n");
-			return 1;
+			return -1;
 		}
 	}
 	else
 	{
 		printf("Mauvais nombre d'arguments!\n");
-		return 1;
+		return -1;
 	}
 	return 0;
 }
