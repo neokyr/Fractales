@@ -11,10 +11,12 @@ uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0);
 
 uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0) {
     int i;
-    t_complex z = z0;
+    t_complex sqZ, z = z0;
     for (i = 0; i < range.maxIter; ++i) {
-        z.real = square(z).real + c.real;
-        z.img = square(z).img + c.img;
+        sqZ = square(z);
+        //Zn+1 = Zn^2 + c
+        z.real = sqZ.real + c.real;
+        z.img = sqZ.img + c.img;
 
         if(fabs(z.real + z.img) > range.maxDeviation) break;
     }
@@ -32,6 +34,7 @@ int fractals(SDL_Window *pWindow, t_range range, t_colors colors) {
     if(window_surface == NULL) return print_error(ERROR_SDL_NO_SURFACE);
     double yIncrement = (range.maxY - range.minY) / (double) window_surface->h;
     double xIncrement = (range.maxX - range.minX) / (double) window_surface->w;
+
 
     double y = range.minY;
     for (int i = 0  ; i < window_surface->h; ++i, y+=yIncrement) {
