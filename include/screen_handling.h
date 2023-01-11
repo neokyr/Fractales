@@ -8,6 +8,10 @@
 
 #define QUIT_KEY SDLK_ESCAPE
 #define SWITCH_KEY SDLK_SPACE
+#define UP_MOVE_KEY SDLK_UP
+#define DOWN_MOVE_KEY SDLK_DOWN
+#define LEFT_MOVE_KEY SDLK_LEFT
+#define RIGHT_MOVE_KEY SDLK_RIGHT
 
 /**
  * Change background color of a window
