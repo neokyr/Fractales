@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <SDL2/SDL.h>
-#include "error.c"
-#include "screen_handling.c"
+#include <stdbool.h>
+#include "error.h"
+#include "screen_handling.h"
 
 int main(int argc, char **argv)
 {
@@ -19,9 +20,13 @@ int main(int argc, char **argv)
 		char * endPtrW;
 		int h = (int) strtol(argv[1], &endPtrH, 10);
 		int w = (int) strtol(argv[2], &endPtrW, 10);
-		if(strcmp(endPtrH, "") != 0 || strcmp(endPtrW, "") != 0)
+		if(strcmp(endPtrH, "") != 0)
 		{
-			return print_error(ERROR_NAN);
+			return print_error(ERROR_NAN, argv[1]);
+		}
+		if(strcmp(endPtrW, "") != 0)
+		{
+			return print_error(ERROR_NAN, argv[2]);
 		}
 		if(h <= mode.h && w <= mode.w)
 		{
@@ -44,11 +49,11 @@ int main(int argc, char **argv)
 					}
 				}
 				//à "remplacer" par l'event handler*/
-				SDL_Delay(5000);
+				SDL_Delay(100);
 			}
 			else
 			{
-				return print_error(ERROR_INCORRECT_TYPE);
+				return print_error(ERROR_INCORRECT_TYPE, argv[3]);
 			}
 			//fin de la partie potentiellement transférée
 		}
