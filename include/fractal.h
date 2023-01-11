@@ -6,6 +6,7 @@
 #define FRACTALES_FRACTAL_H
 
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 
 /**
  * Complex number with an imaginary and real part
