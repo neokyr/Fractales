@@ -4,8 +4,10 @@
 
 #ifndef JDLV_SCREEN_HANDLING_H
 #define JDLV_SCREEN_HANDLING_H
+#include "fractal.h"
 
 #define QUIT_KEY SDLK_ESCAPE
+#define SWITCH_KEY SDLK_SPACE
 
 /**
  * Change background color of a window
@@ -27,6 +29,6 @@ void put_pixel(char* buffer, int x, int y, unsigned int color, int width);
 
 int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, int h);
 
-void handleEvents(SDL_Event *event, bool *gameRunning);
+void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range);
 
 #endif //JDLV_SCREEN_HANDLING_H
