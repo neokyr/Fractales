@@ -20,7 +20,7 @@ uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0) {
     }
 
     if(!colors.linear_interpolation) {
-        return colors.palette[i/(range.maxIter/colors.number_of_color)];
+        return colors.palette[(i*colors.number_of_color)/(range.maxIter+1)];
     } else {
         //TODO linear_interpolation
         return 0x00000000;
