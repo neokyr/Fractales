@@ -9,6 +9,20 @@
 
 uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0);
 
+uint32_t get_linear_interpolation(t_range range, t_colors colors, int nb_iter_dev){
+	int offset_norm = (nb_iter_dev % (range.maxIter / (colors.number_of_color -1 )));
+	int int_base_color = (nb_iter_dev / (range.maxIter / (colors.number_of_color -1 )));
+	
+	if ( nb_iter_dev == range.maxIter ){
+		return(colors.palette[colors.number_of_color - 1]);
+	}	
+	else {
+	
+	return(colors.palette[((1-offset_norm)*int_base_color)+(offset_norm*(int_base_color + 1)];
+		
+	}
+}
+
 uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0) {
     int i;
     t_complex sqZ, z = z0;
