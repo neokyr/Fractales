@@ -2,6 +2,7 @@
 #include <string.h>
 #include <SDL2/SDL.h>
 #include "error.c"
+#include "screen_handling.c"
 
 int main(int argc, char **argv)
 {
@@ -33,18 +34,16 @@ int main(int argc, char **argv)
 					return print_error(ERROR_SDL_WINDOW_NULL);
 				}
 				SDL_UpdateWindowSurface(window);
-				/*
 				bool keep_window_open = true;
 				while(keep_window_open)
 				{
 					SDL_Event e;
 					while(SDL_PollEvent(&e) > 0)
 					{
-						
+						handleEvents(&e, &keep_window_open);
 					}
 				}
-				*/
-				//à "remplacer" par l'event handler
+				//à "remplacer" par l'event handler*/
 				SDL_Delay(5000);
 			}
 			else
