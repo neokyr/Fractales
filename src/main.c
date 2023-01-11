@@ -40,16 +40,12 @@ int main(int argc, char **argv)
 				}
 				SDL_UpdateWindowSurface(window);
 				bool keep_window_open = true;
+				SDL_Event e;
 				while(keep_window_open)
 				{
-					SDL_Event e;
-					while(SDL_PollEvent(&e) > 0)
-					{
-						handleEvents(&e, &keep_window_open);
-					}
+					handleEvents(&e, &keep_window_open);
+					SDL_Delay(17);
 				}
-				//à "remplacer" par l'event handler*/
-				SDL_Delay(100);
 			}
 			else
 			{
