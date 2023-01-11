@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "error.h"
 #include "screen_handling.h"
+#include "fractal.h"
 
 int main(int argc, char **argv)
 {
