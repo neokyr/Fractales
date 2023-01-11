@@ -31,53 +31,48 @@ int main(int argc, char **argv)
 		}
 		if(h <= mode.h && w <= mode.w)
 		{
-			//cette partie reste à modifier
 			if(strcmp(argv[3], "Mandelbrot") == 0 || strcmp(argv[3], "Julia") == 0)
 			{
-				SDL_Window *window = SDL_CreateWindow("MANNY!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, 0);
+				SDL_Window *window = SDL_CreateWindow("Fractales", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, 0);
 				if(!window)
 				{
 					return print_error(ERROR_SDL_WINDOW_NULL);
 				}
 				bool keep_window_open = true;
 				SDL_Event e;
+				t_range range;
+				range.isMandelbrot = strcmp(argv[3], "Mandelbrot") == 0;
+				range.maxDeviation = 16;
+				range.maxIter = 100;
+				range.maxX = 1;
+				range.maxY = 1.5;
+				range.minX = -2.5;
+				range.minY = -1.5;
+				t_complex unchanging;
+				unchanging.real = 0;
+				unchanging.img = 0;
+				range.unchanging = unchanging;
+				t_colors colors;
+				Uint32 palette[6] = { 0x00459E00, 0x43900400, 0xF5DD1100, 0xDE860400, 0xFF280000, 0x00000000 };
+				colors.palette = (Uint32*) &palette;
+				colors.linear_interpolation = false;
+				colors.number_of_color = 6;
 				while(keep_window_open)
 				{
-          t_range range;
-                range.isMandelbrot = strcmp(argv[3], "Mandelbrot") == 0;
-                range.maxDeviation = 16;
-                range.maxIter = 100;
-                range.maxX = 1;
-                range.maxY = 1.5;
-                range.minX = -2.5;
-                range.minY = -1.5;
-                t_complex unchanging;
-                unchanging.real = 0;
-                unchanging.img = 0;
-                range.unchanging = unchanging;
-
-                t_colors colors;
-                Uint32 palette[6] = { 0x00459E00, 0x43900400, 0xF5DD1100, 0xDE860400, 0xFF280000, 0x00000000 };
-                colors.palette = (Uint32*) &palette;
-                colors.linear_interpolation = false;
-                colors.number_of_color = 6;
-
-                int err = fractals(window, range, colors);
-                if (err != 0) {
-                    SDL_Quit();
-                    return err;
-                }
-
-                SDL_UpdateWindowSurface(window);
-					handleEvents(&e, &keep_window_open);
-					SDL_Delay(17);
+					int err = fractals(window, range, colors);
+					if (err != 0) {
+						SDL_Quit();
+						return err;
+					}
+					SDL_UpdateWindowSurface(window);
+					handleEvents(&e, &keep_window_open, &range/*, &colors*/);
+					SDL_Delay(16);
 				}
 			}
 			else
 			{
 				return print_error(ERROR_INCORRECT_TYPE, argv[3]);
 			}
-			//fin de la partie potentiellement transférée
 		}
 		else
 		{

@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include "../include/screen_handling.h"
+#include "fractal.h"
 
 bool isLittleEndian() {
     int n = 1;
@@ -64,18 +65,23 @@ int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, i
     return 0;
 }
 
-void handleEvents(SDL_Event *event, bool* gameRunning) {
+void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range/*, t_colors *colors*/) {
+	
     SDL_KeyCode keyPressed;
     while (SDL_PollEvent(event)) {
         switch (event->type) {
             case SDL_KEYDOWN:
                 keyPressed = event->key.keysym.sym;
-                if (keyPressed == QUIT_KEY)
-                {
-                    *gameRunning = false;
-                    break;
-                }
-
+                switch (keyPressed) {
+                	case QUIT_KEY:
+						*gameRunning = false;
+						break;
+                	case SWITCH_KEY:
+                		range->isMandelbrot = !range->isMandelbrot;
+                		break;
+            		default :
+            			break;
+            	}
                 break;
             case SDL_QUIT: /* if mouse click to close window */
             {
