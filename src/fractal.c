@@ -7,6 +7,7 @@
 #include "../include/error.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 
 uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0);
 
