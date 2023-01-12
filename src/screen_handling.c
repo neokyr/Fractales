@@ -65,7 +65,7 @@ int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, i
     return 0;
 }
 
-void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range/*, t_colors *colors*/) {
+void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Window *window/*, t_colors *colors*/) {
 	
     SDL_KeyCode keyPressed;
     while (SDL_PollEvent(event)) {
@@ -78,6 +78,13 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range/*, t_color
 						break;
                 	case SWITCH_KEY:
                 		range->isMandelbrot = !range->isMandelbrot;
+                		if(range->isMandelbrot)
+            			{
+            				t_complex unchanging;
+							unchanging.real = 0;
+							unchanging.img = 0;
+            				range->unchanging = unchanging;
+            			}
                 		break;
             		default :
             			break;
@@ -90,6 +97,26 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range/*, t_color
             }
             case SDL_KEYUP: {
                 break;
+            }
+            case SDL_MOUSEBUTTONDOWN: {
+            	if(event->button.button == CLICK){
+            		if(!range->isMandelbrot)
+            		{
+            			t_complex unchanging;
+            			int x =0;
+            			int y=0;
+            			SDL_Surface *surf = SDL_GetWindowSurface(window);
+						SDL_GetMouseState(&x, &y);
+						printf("x = %d\ny = %d\nw = %d\nh = %d\n", x, y, surf->w, surf->h);
+						unchanging.real = (surf->w / x)-2;
+						unchanging.img = (surf->h / y)-2;
+						range->unchanging = unchanging;
+            		}
+            	}
+            	break;
+            }
+            case SDL_MOUSEBUTTONUP: {
+            	break;
             }
         }
     }
