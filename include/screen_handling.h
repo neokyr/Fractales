@@ -34,6 +34,6 @@ void put_pixel(char* buffer, int x, int y, unsigned int color, int width);
 
 int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, int h);
 
-void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Window *window);
+void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Window *window, bool* isVariationActive);
 
 #endif //JDLV_SCREEN_HANDLING_H

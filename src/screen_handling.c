@@ -65,7 +65,7 @@ int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, i
     return 0;
 }
 
-void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Window *window/*, t_colors *colors*/) {
+void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Window *window, bool* isVariationActive/*, t_colors *colors*/) {
 	
     SDL_KeyCode keyPressed;
     while (SDL_PollEvent(event)) {
@@ -80,6 +80,7 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
                 		range->isMandelbrot = !range->isMandelbrot;
                 		if(range->isMandelbrot)
             			{
+            				*isVariationActive = false;
             				t_complex unchanging;
 							unchanging.real = 0;
 							unchanging.img = 0;
@@ -102,14 +103,7 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
             	if(event->button.button == CLICK){
             		if(!range->isMandelbrot)
             		{
-            			t_complex unchanging;
-            			int x =0;
-            			int y=0;
-            			SDL_Surface *surf = SDL_GetWindowSurface(window);
-						SDL_GetMouseState(&x, &y);
-						unchanging.real = ((((float)x) / surf->w) * 4)-2;
-						unchanging.img = ((((float)y) / surf->h) * 4)-2;
-						range->unchanging = unchanging;
+            			*isVariationActive = !(*isVariationActive);
             		}
             	}
             	break;
@@ -117,6 +111,22 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
             case SDL_MOUSEBUTTONUP: {
             	break;
             }
+            case SDL_MOUSEMOTION: {
+            	if(*isVariationActive)
+            	{
+            		t_complex unchanging;
+        			int x =0;
+        			int y=0;
+        			SDL_Surface *surf = SDL_GetWindowSurface(window);
+					SDL_GetMouseState(&x, &y);
+					unchanging.real = ((((float)x) / surf->w) * 4)-2;
+					unchanging.img = ((((float)y) / surf->h) * 4)-2;
+					range->unchanging = unchanging;
+            	}
+            	break;
+            }
+            default:
+            	break;
         }
     }
 }
