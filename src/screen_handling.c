@@ -125,6 +125,18 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
             	}
             	break;
             }
+			
+
+			case SDL_MOUSEWHEEL: {
+				if(event.wheel.y > 0){ // scroll up 
+				// zoom +
+				}
+				else if(event.wheel.y < 0){ // scroll down
+				// zoom -
+				}
+			}
+
+
             default:
             	break;
         }
