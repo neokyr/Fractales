@@ -1,1 +1,0 @@
-/usr/bin/cc -g CMakeFiles/Fractales.dir/src/error.c.o CMakeFiles/Fractales.dir/src/fractal.c.o CMakeFiles/Fractales.dir/src/main.c.o CMakeFiles/Fractales.dir/src/screen_handling.c.o -o Fractales  -lSDL2 
