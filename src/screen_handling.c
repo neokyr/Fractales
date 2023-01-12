@@ -107,9 +107,8 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
             			int y=0;
             			SDL_Surface *surf = SDL_GetWindowSurface(window);
 						SDL_GetMouseState(&x, &y);
-						printf("x = %d\ny = %d\nw = %d\nh = %d\n", x, y, surf->w, surf->h);
-						unchanging.real = (surf->w / x)-2;
-						unchanging.img = (surf->h / y)-2;
+						unchanging.real = ((((float)x) / surf->w) * 4)-2;
+						unchanging.img = ((((float)y) / surf->h) * 4)-2;
 						range->unchanging = unchanging;
             		}
             	}
