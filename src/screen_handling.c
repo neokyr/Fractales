@@ -118,6 +118,8 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
             		//switch interpolation on and off
             		case INTERPOLATION_KEY:
             			colors->linear_interpolation = !colors->linear_interpolation;
+            		case CHANGE_COLOR_KEY:
+            			//insérer le code pour changer la couleur
             			break;
             		default :
             			break;
