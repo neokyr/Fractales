@@ -111,6 +111,9 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
                 		range->maxX += movePercent * xRange;
                 		range->minX += movePercent * xRange;
                 		break;
+            		case CHANGE_COLOR_KEY:
+            			//insérer le code pour changer la couleur
+            			break;
             		default :
             			break;
             	}
