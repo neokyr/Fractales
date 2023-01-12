@@ -67,7 +67,7 @@ int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, i
     return 0;
 }
 
-void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Window *window, bool* isVariationActive/*, t_colors *colors*/) {
+void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Window *window, bool* isVariationActive, t_colors *colors) {
 	
 	float xRange = range->maxX - range->minX;
 	float yRange = range->maxY - range->minY;
@@ -83,7 +83,11 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
 					//switching between the fractals
                 	case SWITCH_KEY:
                 		range->isMandelbrot = !range->isMandelbrot;
-                		if(range->isMandelbrot)
+            			range->maxX = 1;
+						range->maxY = 1.5;
+						range->minX = -2.5;
+						range->minY = -1.5;
+     		   			if(range->isMandelbrot)
             			{
             				//deactivating variation when going back to Mandelbrot
             				*isVariationActive = false;
@@ -111,6 +115,13 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
                 		range->maxX += movePercent * xRange;
                 		range->minX += movePercent * xRange;
                 		break;
+            		//switch interpolation on and off
+            		case INTERPOLATION_KEY:
+            			colors->linear_interpolation = !colors->linear_interpolation;
+            			break;
+            		case CHANGE_COLOR_KEY:
+            			//insérer le code pour changer la couleur
+            			break;
             		default :
             			break;
             	}
