@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 						return err;
 					}
 					SDL_UpdateWindowSurface(window);
-					handleEvents(&e, &keep_window_open, &range, window, &isVariationActive/*, &colors*/);
+					handleEvents(&e, &keep_window_open, &range, window, &isVariationActive, &colors);
 					SDL_Delay(16);
 				}
 			}
