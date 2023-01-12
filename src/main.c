@@ -57,6 +57,7 @@ int main(int argc, char **argv)
 				colors.palette = (Uint32*) &palette;
 				colors.linear_interpolation = false;
 				colors.number_of_color = 6;
+				bool isVariationActive = false;
 				while(keep_window_open)
 				{
 					int err = fractals(window, range, colors);
@@ -65,7 +66,7 @@ int main(int argc, char **argv)
 						return err;
 					}
 					SDL_UpdateWindowSurface(window);
-					handleEvents(&e, &keep_window_open, &range/*, &colors*/);
+					handleEvents(&e, &keep_window_open, &range, window, &isVariationActive/*, &colors*/);
 					SDL_Delay(16);
 				}
 			}
