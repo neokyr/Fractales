@@ -83,7 +83,11 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
 					//switching between the fractals
                 	case SWITCH_KEY:
                 		range->isMandelbrot = !range->isMandelbrot;
-                		if(range->isMandelbrot)
+            			range->maxX = 1;
+						range->maxY = 1.5;
+						range->minX = -2.5;
+						range->minY = -1.5;
+     		   			if(range->isMandelbrot)
             			{
             				//deactivating variation when going back to Mandelbrot
             				*isVariationActive = false;

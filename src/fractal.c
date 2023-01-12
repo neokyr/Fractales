@@ -11,23 +11,28 @@
 uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0);
 
 uint32_t get_linear_interpolation(t_range range, t_colors colors, int nb_iter_dev){
+
+
 	double offset_norm = (nb_iter_dev % (range.maxIter / (colors.number_of_color -1 )));
 	//	printf("%d %% %d / %d = %f\n",nb_iter_dev, range.maxIter, (colors.number_of_color-1), offset_norm);
-	offset_norm = offset_norm / ((double)range.maxIter / (double)(colors.number_of_color -1));
+	offset_norm = offset_norm / (((double)range.maxIter / (double)(colors.number_of_color -1)));
 	// printf("%f\n", offset_norm);
-	int index_base_color = (nb_iter_dev / (range.maxIter / (colors.number_of_color -1 )));
+	int index_base_color = ((nb_iter_dev * colors.number_of_color )/ (range.maxIter+1));
 	uint32_t color_1 = colors.palette[index_base_color];
 	
 
 	if ( nb_iter_dev == range.maxIter ){
 		return(color_1);
 	}	
-
 	else {
+	
+	
 		uint32_t color_2 = colors.palette[index_base_color + 1];
 		for (int i = 0; i < 4; i++){
 			((char*) &color_1)[i] *= (1 - offset_norm);
 			((char*) &color_2)[i] *= offset_norm;
+			
+		
 		}
 		return(color_1 + color_2);
 	}
