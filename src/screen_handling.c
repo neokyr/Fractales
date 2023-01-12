@@ -9,6 +9,8 @@
 #include "../include/screen_handling.h"
 #include "fractal.h"
 
+#define movePercent 0.02
+
 bool isLittleEndian() {
     int n = 1;
     return *(char*)&n == 1; //if the first byte of n is equal to 1 then the system is littleEndian
@@ -67,6 +69,8 @@ int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, i
 
 void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Window *window, bool* isVariationActive/*, t_colors *colors*/) {
 	
+	float xRange = range->maxX - range->minX;
+	float yRange = range->maxY - range->minY;
     SDL_KeyCode keyPressed;
     while (SDL_PollEvent(event)) {
         switch (event->type) {
@@ -76,16 +80,36 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
                 	case QUIT_KEY:
 						*gameRunning = false;
 						break;
+					//switching between the fractals
                 	case SWITCH_KEY:
                 		range->isMandelbrot = !range->isMandelbrot;
                 		if(range->isMandelbrot)
             			{
+            				//deactivating variation when going back to Mandelbrot
             				*isVariationActive = false;
             				t_complex unchanging;
 							unchanging.real = 0;
 							unchanging.img = 0;
             				range->unchanging = unchanging;
             			}
+                		break;
+            		//moving the fractal
+            		//(-1.5, -2.5) is in the top left, (1, 1.5) is in the bottom right 
+                	case UP_MOVE_KEY:
+                		range->maxY -= movePercent * yRange;
+                		range->minY -= movePercent * yRange;
+                		break;
+                	case DOWN_MOVE_KEY:
+                		range->maxY += movePercent * yRange;
+                		range->minY += movePercent * yRange;
+                		break;
+                	case LEFT_MOVE_KEY:
+                		range->maxX -= movePercent * xRange;
+                		range->minX -= movePercent * xRange;
+                		break;
+                	case RIGHT_MOVE_KEY:
+                		range->maxX += movePercent * xRange;
+                		range->minX += movePercent * xRange;
                 		break;
             		default :
             			break;
@@ -99,6 +123,7 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
             case SDL_KEYUP: {
                 break;
             }
+            //switching the variations on Julia
             case SDL_MOUSEBUTTONDOWN: {
             	if(event->button.button == CLICK){
             		if(!range->isMandelbrot)
@@ -111,6 +136,7 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
             case SDL_MOUSEBUTTONUP: {
             	break;
             }
+            //changing the variation on Julia
             case SDL_MOUSEMOTION: {
             	if(*isVariationActive)
             	{
