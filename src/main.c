@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 		{
 			if(strcmp(argv[3], "Mandelbrot") == 0 || strcmp(argv[3], "Julia") == 0)
 			{
-				SDL_Window *window = SDL_CreateWindow("Fractales", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, 0);
+				SDL_Window *window = SDL_CreateWindow("Fractales", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_RESIZABLE);
 				if(!window)
 				{
 					return print_error(ERROR_SDL_WINDOW_NULL);

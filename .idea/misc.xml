@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="CidrRootsConfiguration">
+    <sourceRoots>
+      <file path="$PROJECT_DIR$/SDL2-2.26.2/i686-w64-mingw32/include" />
+      <file path="$PROJECT_DIR$/SDL2-2.26.2/x86_64-w64-mingw32/include" />
+      <file path="$PROJECT_DIR$/include" />
+    </sourceRoots>
+  </component>
   <component name="MakefileSettings">
     <option name="linkedExternalProjectsSettings">
       <MakefileProjectSettings>

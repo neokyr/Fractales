@@ -191,6 +191,8 @@ void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Windo
 				range->minX = (range->minX + nx - (nrange_x/2));
 				range->maxY = (range->minY + ny + (nrange_y/2));
 				range->minY = (range->minY + ny - (nrange_y/2));
+
+                SDL_WarpMouseInWindow(window, surf->w / 2 , surf->h / 2);
 				// printf("maxX = %f, nimX = %f, maxY = %f , minY = %f \n", range->maxX,range->minX, range->maxY, range->minY);
 
 			}
