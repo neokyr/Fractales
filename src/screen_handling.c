@@ -67,8 +67,7 @@ int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, i
     return 0;
 }
 
-void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Window *window, bool *isVariationActive,
-                  t_colors *colors, int *current_palette) {
+void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Window *window, bool *isVariationActive, t_colors *colors, int *current_palette, bool *isFullScreen) {
 	
 	float xRange = range->maxX - range->minX;
 	float yRange = range->maxY - range->minY;
@@ -84,19 +83,23 @@ void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Windo
 					//switching between the fractals
                 	case SWITCH_KEY:
                 		range->isMandelbrot = !range->isMandelbrot;
-            			range->maxX = 1;
-						range->maxY = 1.5;
-						range->minX = -2.5;
-						range->minY = -1.5;
-     		   			if(range->isMandelbrot)
-            			{
-            				//deactivating variation when going back to Mandelbrot
-            				*isVariationActive = false;
-            				t_complex unchanging;
-							unchanging.real = 0;
-							unchanging.img = 0;
-            				range->unchanging = unchanging;
-            			}
+                        if(range->isMandelbrot) {
+                            //deactivating variation when going back to Mandelbrot
+                            *isVariationActive = false;
+                            range->maxX = 1;
+                            range->maxY = 1.5;
+                            range->minX = -2.5;
+                            range->minY = -1.5;
+                            range->unchanging.real = 0;
+                            range->unchanging.img = 0;
+                        } else {
+                            range->maxX = 2;
+                            range->maxY = 2;
+                            range->minX = -2;
+                            range->minY = -2;
+                            range->unchanging.real = -0.4;
+                            range->unchanging.img = 0.6;
+                        }
                 		break;
             		//moving the fractal
             		//(-1.5, -2.5) is in the top left, (1, 1.5) is in the bottom right 
@@ -125,6 +128,17 @@ void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Windo
                         (*current_palette)++;
                         (*current_palette) %= 3;
             			break;
+        			case FULLSCREEN_KEY:
+        				if(*isFullScreen)
+        				{
+        					SDL_SetWindowFullscreen(window, 0);
+        				}
+        				else
+        				{
+        					SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+        				}
+        				*isFullScreen = !(*isFullScreen);
+        				break;
             		default :
             			break;
             	}
