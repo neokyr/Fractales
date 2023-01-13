@@ -54,3 +54,4 @@ dkms.conf
 
 ./fractales
 /fractales
+/cmake-build-debug/
