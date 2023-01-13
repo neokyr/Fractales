@@ -67,7 +67,8 @@ int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, i
     return 0;
 }
 
-void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Window *window, bool* isVariationActive, t_colors *colors) {
+void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Window *window, bool *isVariationActive,
+                  t_colors *colors, int *current_palette) {
 	
 	float xRange = range->maxX - range->minX;
 	float yRange = range->maxY - range->minY;
@@ -83,19 +84,23 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
 					//switching between the fractals
                 	case SWITCH_KEY:
                 		range->isMandelbrot = !range->isMandelbrot;
-            			range->maxX = 1;
-						range->maxY = 1.5;
-						range->minX = -2.5;
-						range->minY = -1.5;
-     		   			if(range->isMandelbrot)
-            			{
-            				//deactivating variation when going back to Mandelbrot
-            				*isVariationActive = false;
-            				t_complex unchanging;
-							unchanging.real = 0;
-							unchanging.img = 0;
-            				range->unchanging = unchanging;
-            			}
+                        if(range->isMandelbrot) {
+                            //deactivating variation when going back to Mandelbrot
+                            *isVariationActive = false;
+                            range->maxX = 1;
+                            range->maxY = 1.5;
+                            range->minX = -2.5;
+                            range->minY = -1.5;
+                            range->unchanging.real = 0;
+                            range->unchanging.img = 0;
+                        } else {
+                            range->maxX = 2;
+                            range->maxY = 2;
+                            range->minX = -2;
+                            range->minY = -2;
+                            range->unchanging.real = -0.4;
+                            range->unchanging.img = 0.6;
+                        }
                 		break;
             		//moving the fractal
             		//(-1.5, -2.5) is in the top left, (1, 1.5) is in the bottom right 
@@ -121,6 +126,8 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
             			break;
             		case CHANGE_COLOR_KEY:
             			//insérer le code pour changer la couleur
+                        (*current_palette)++;
+                        (*current_palette) %= 3;
             			break;
             		default :
             			break;
@@ -162,6 +169,32 @@ void handleEvents(SDL_Event *event, bool* gameRunning, t_range *range, SDL_Windo
             	}
             	break;
             }
+			
+
+			case SDL_MOUSEWHEEL: {
+				int x = 0;
+				int y = 0;
+				// int x = event->motion.x;
+				// int y = event->motion.y;
+				SDL_GetMouseState(&x, &y);
+				// printf("the mouse is located in %d : %d \n", x, y);
+				SDL_Surface *surf = SDL_GetWindowSurface(window);
+				double range_x = (range->maxX - range->minX);
+				double nx = (double) x * range_x / surf->w ;
+				double nrange_x = (1 + event->wheel.y * movePercent) * range_x;
+				double range_y = (range->maxY - range->minY);
+				double ny = (double) y * range_y / surf->h;
+				double nrange_y = (1 + event->wheel.y * movePercent) * range_y;
+				// printf("the nrange_x is %.2f and the nrange_y is %.2f \n", nrange_x, nrange_y);
+
+				range->maxX = (range->minX + nx + (nrange_x/2));
+				range->minX = (range->minX + nx - (nrange_x/2));
+				range->maxY = (range->minY + ny + (nrange_y/2));
+				range->minY = (range->minY + ny - (nrange_y/2));
+				// printf("maxX = %f, nimX = %f, maxY = %f , minY = %f \n", range->maxX,range->minX, range->maxY, range->minY);
+
+			}
+
             default:
             	break;
         }

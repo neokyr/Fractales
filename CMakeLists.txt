@@ -3,16 +3,17 @@ project(Fractales C)
 
 set(CMAKE_C_STANDARD 23)
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/lib/cmake/SDL2)
-set(SDL2_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/SDL2-2.26.2/Module)
+
 if (${CMAKE_SIZEOF_VOID_P} MATCHES 8)
-    set(SDL2_LIBRARIES "${PROJECT_SOURCE_DIR}/lib/x64/SDL2.lib;${PROJECT_SOURCE_DIR}/lib/x64/SDL2main.lib")
+    set(SDL2_PATH "${PROJECT_SOURCE_DIR}\\SDL2-2.26.2\\x86_64-w64-mingw32")
 else ()
-    set(SDL2_LIBRARIES "${PROJECT_SOURCE_DIR}/lib/x86/SDL2.lib;${PROJECT_SOURCE_DIR}/lib/x86/SDL2main.lib")
+    set(SDL2_PATH "${PROJECT_SOURCE_DIR}\\SDL2-2.26.2\\i686-w64-mingw32")
 endif ()
 
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR} include)
+include_directories(${SDL2_INCLUDE_DIR} include/ ${PROJECT_SOURCE_DIR}/SDL2-2.26.2/x86_64-w64-mingw32/include)
+
 
 add_executable(Fractales
         include/error.h
@@ -23,4 +24,4 @@ add_executable(Fractales
         src/main.c
         src/screen_handling.c)
 
-target_link_libraries(Fractales ${SDL2_LIBRARIES})
+target_link_libraries(Fractales ${SDL2_LIBRARY})

@@ -29,20 +29,29 @@ uint32_t get_linear_interpolation(t_range range, t_colors colors, int nb_iter_de
 	
 	
 		uint32_t color_2 = colors.palette[index_base_color + 1];
+        uint32_t color_3;
 		for (int i = 0; i < 4; i++){
-			((char*) &color_1)[i] *= (1 - offset_norm);
-			((char*) &color_2)[i] *= offset_norm;
-			
-		
+			/*((char*) &color_1)[i] = ceil( ((char*) &color_1)[i] * (1 - offset_norm));
+			((char*) &color_2)[i] = ceil( ((char*) &color_2)[i] * offset_norm);
+            ((char*) &color_3)[i] = ((char*) &color_1)[i] + ((char*) &color_2)[i];*/
+            double y0 = ((char*) &color_1)[i];
+            double y1 = ((char*) &color_2)[i];
+            double x0 = index_base_color;
+            double x1 = index_base_color+1;
+            double xp = (double) nb_iter_dev * (double) (colors.number_of_color -1) / (double) range.maxIter;
+
+            double yp = y0 + ((y1-y0) / (x1-x0)) * (xp -x0);
+
+            ((char*) &color_3)[i] = floor(yp);
 		}
-		return(color_1 + color_2);
+		return(color_3);
 	}
 }
 
 uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0) {
     int i;
     t_complex sqZ, z = z0;
-    for (i = 0; i < range.maxIter; ++i) {
+    for (i = 0; i < range.maxIter; i++) {
         sqZ = square(z);
         //Zn+1 = Zn^2 + c
         z.real = sqZ.real + c.real;
@@ -87,7 +96,7 @@ int fractals(SDL_Window *pWindow, t_range range, t_colors colors) {
 t_complex square(t_complex nb) {
     t_complex result;
 
-    result.real = nb.real * nb.real - nb.img * nb.img;
+    result.real = nb.real * nb.real -(nb.img * nb.img);
     result.img = 2 * nb.real * nb.img;
 
     return result;
