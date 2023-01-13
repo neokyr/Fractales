@@ -2,7 +2,7 @@ NAME=fractales
 
 CC=gcc
 FLAGS= -Wall -Werror -Wextra
-FLAGS_LINK= -lSDL2
+FLAGS_LINK= -lSDL2 -lm
 
 OPTI ?= 0
 ifeq ($(OPTI), 1)
