@@ -67,8 +67,7 @@ int print_square(SDL_Window* pWindow, unsigned int color, int x, int y, int w, i
     return 0;
 }
 
-void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Window *window, bool *isVariationActive,
-                  t_colors *colors, int *current_palette) {
+void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Window *window, bool *isVariationActive, t_colors *colors, int *current_palette, bool *isFullScreen) {
 	
 	float xRange = range->maxX - range->minX;
 	float yRange = range->maxY - range->minY;
@@ -129,6 +128,17 @@ void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Windo
                         (*current_palette)++;
                         (*current_palette) %= 3;
             			break;
+        			case FULLSCREEN_KEY:
+        				if(*isFullScreen)
+        				{
+        					SDL_SetWindowFullscreen(window, 0);
+        				}
+        				else
+        				{
+        					SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+        				}
+        				*isFullScreen = !(*isFullScreen);
+        				break;
             		default :
             			break;
             	}
