@@ -12,8 +12,8 @@
  * Complex number with an imaginary and real part
  */
 typedef struct s_complex {
-    double real;
-    double img;
+    float real;
+    float img;
 } t_complex;
 
 /**
