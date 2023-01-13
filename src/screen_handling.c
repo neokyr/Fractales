@@ -177,19 +177,20 @@ void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Windo
 				// int x = event->motion.x;
 				// int y = event->motion.y;
 				SDL_GetMouseState(&x, &y);
+				// printf("the mouse is located in %d : %d \n", x, y);
 				SDL_Surface *surf = SDL_GetWindowSurface(window);
 				double range_x = (range->maxX - range->minX);
-				double nx = (double)x * range_x / surf->w;
+				double nx = (double) x * range_x / surf->w ;
 				double nrange_x = (1 + event->wheel.y * movePercent) * range_x;
 				double range_y = (range->maxY - range->minY);
 				double ny = (double) y * range_y / surf->h;
 				double nrange_y = (1 + event->wheel.y * movePercent) * range_y;
+				// printf("the nrange_x is %.2f and the nrange_y is %.2f \n", nrange_x, nrange_y);
 
-
-				range->maxX = (nx + (nrange_x/2));
-				range->minX = (nx - (nrange_x/2));
-				range->maxY = (ny + (nrange_y/2));
-				range->minY = (ny - (nrange_y/2));
+				range->maxX = (range->minX + nx + (nrange_x/2));
+				range->minX = (range->minX + nx - (nrange_x/2));
+				range->maxY = (range->minY + ny + (nrange_y/2));
+				range->minY = (range->minY + ny - (nrange_y/2));
 				// printf("maxX = %f, nimX = %f, maxY = %f , minY = %f \n", range->maxX,range->minX, range->maxY, range->minY);
 
 			}
