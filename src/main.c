@@ -44,13 +44,23 @@ int main(int argc, char **argv)
 				range.isMandelbrot = strcmp(argv[3], "Mandelbrot") == 0;
 				range.maxDeviation = 16;
 				range.maxIter = 500;
-				range.maxX = 1;
-				range.maxY = 1.5;
-				range.minX = -2.5;
-				range.minY = -1.5;
-				t_complex unchanging;
-				unchanging.real = 0;
-				unchanging.img = 0;
+                t_complex unchanging;
+                if(range.isMandelbrot) {
+                    range.maxX = 1;
+                    range.maxY = 1.5;
+                    range.minX = -2.5;
+                    range.minY = -1.5;
+                    unchanging.real = 0;
+                    unchanging.img = 0;
+                } else {
+                    range.maxX = 2;
+                    range.maxY = 2;
+                    range.minX = -2;
+                    range.minY = -2;
+                    unchanging.real = -0.4;
+                    unchanging.img = 0.6;
+                }
+
 				range.unchanging = unchanging;
                 t_colors palettes[3];
 
