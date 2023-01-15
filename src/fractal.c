@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
+#include "../OpenCL-SDK/external/OpenCL-Headers/CL/cl.h"
 
 uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0);
 
@@ -73,6 +74,55 @@ int fractals(SDL_Window *pWindow, t_range range, t_colors colors) {
     double yIncrement = (range.maxY - range.minY) / (double) window_surface->h;
     double xIncrement = (range.maxX - range.minX) / (double) window_surface->w;
 
+    //Setup OpenCL
+    cl_device_id device = 0;
+    cl_context context = 0;
+    cl_int err = 0;
+    cl_context_properties properties=0;
+    cl_platform_id platformId = 0;
+    err = clGetPlatformIDs(1, &platformId, NULL);
+    err = clGetDeviceIDs(platformId, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
+    context = clCreateContext(&properties, 1, &device, NULL, NULL, &err);
+    if(context == NULL) return print_error(ERROR_CANT_ALLOC_MEMORY);
+    cl_command_queue queue = clCreateCommandQueueWithProperties(context, device, (cl_command_queue_properties) 0, &err);
+
+    //Define the kernel
+    char* source = {
+            "kernel void calcSin(global float *data) {\n"
+            "  int id = get_global_id(0);\n"
+            "  data[id] = sin(data[id]);\n"
+            "}\n"
+    };
+
+    float data[] = {10.0, 12.2, 22.34, 33, 44, 22, 15};
+#define LENGTH 7
+#define DATA_SIZE (LENGTH * sizeof(float))
+
+    //Compile the kernel
+    cl_program program = clCreateProgramWithSource(context, 1, (const char**)&source, NULL, NULL);
+    clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+    cl_kernel kernel = clCreateKernel(program, "calcSin", NULL);
+
+    //Create the memory object
+    cl_mem buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, DATA_SIZE, NULL, NULL);
+
+    //Copy data to the input
+    clEnqueueWriteBuffer(queue, buffer, CL_FALSE, 0, DATA_SIZE, data, 0, NULL, NULL);
+
+    //Execute kernel
+    clSetKernelArg(kernel, 0, sizeof(buffer), &buffer);
+    size_t global_dimensions[] = {LENGTH,0,0};
+    clEnqueueNDRangeKernel(queue, kernel, 1, NULL, global_dimensions, NULL, 0, NULL, NULL);
+
+    //Read back result
+    clEnqueueReadBuffer(queue, buffer, CL_FALSE, 0, sizeof(cl_float)*LENGTH, data, 0, NULL, NULL);
+
+    //Wait for everything to finish
+    clFinish(queue);
+
+    for (int i = 0; i < LENGTH; ++i) {
+        printf("%f\n", data[i]);
+    }
 
     double y = range.minY;
     for (int i = 0  ; i < window_surface->h; ++i, y+=yIncrement) {

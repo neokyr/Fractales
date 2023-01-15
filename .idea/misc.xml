@@ -7,6 +7,9 @@
       <file path="$PROJECT_DIR$/SDL2-2.26.2/x86_64-w64-mingw32/include" />
       <file path="$PROJECT_DIR$/include" />
     </sourceRoots>
+    <libraryRoots>
+      <file path="$PROJECT_DIR$/OpenCL-SDK" />
+    </libraryRoots>
   </component>
   <component name="MakefileSettings">
     <option name="linkedExternalProjectsSettings">

@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
 #include <SDL2/SDL.h>
 #include <stdbool.h>
+#include <stdlib.h>
+
 #include "error.h"
 #include "screen_handling.h"
 #include "fractal.h"
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 				SDL_Event e;
 				t_range range;
 				range.isMandelbrot = strcmp(argv[3], "Mandelbrot") == 0;
-				range.maxDeviation = 16;
+				range.maxDeviation = 4;
 				range.maxIter = 500;
                 t_complex unchanging;
                 if(range.isMandelbrot) {
@@ -72,10 +72,10 @@ int main(int argc, char **argv)
                 palettes[0].linear_interpolation = true;
                 palettes[0].number_of_color = 12;
 
-                Uint32 s_palette[9] ={ 0x00229E00, 0x43900400, 0xF5DD1100, 0xDE860400, 0xFF280000, 0xFF287000,0x44287400,0xF498F000,0x00000000 };
+                Uint32 s_palette[6] ={ 0x00940A00, 0x00AD0C00, 0x00C70D00, 0x00E00F00, 0x00FA1000,0x00000000, };
                 palettes[1].palette = (Uint32*) &s_palette;
-                palettes[1].linear_interpolation = false;
-                palettes[1].number_of_color = 9;
+                palettes[1].linear_interpolation = true;
+                palettes[1].number_of_color = 6;
 
                 Uint32 t_palette[3] ={  0xFFFFFF00, 0xDE860400, 0xFF280000 };
                 palettes[2].palette = (Uint32*) &t_palette;

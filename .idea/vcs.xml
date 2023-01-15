@@ -2,5 +2,11 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/OpenCL-SDK" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/OpenCL-SDK/external/OpenCL-CLHPP" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/OpenCL-SDK/external/OpenCL-CLHPP/external/CMock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/OpenCL-SDK/external/OpenCL-CLHPP/external/Unity" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/OpenCL-SDK/external/OpenCL-Headers" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/OpenCL-SDK/external/OpenCL-ICD-Loader" vcs="Git" />
   </component>
 </project>

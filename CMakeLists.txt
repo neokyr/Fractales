@@ -11,8 +11,12 @@ else ()
     set(SDL2_PATH "${PROJECT_SOURCE_DIR}\\SDL2-2.26.2\\i686-w64-mingw32")
 endif ()
 
+find_package(OpenCL REQUIRED)
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR} include/ ${PROJECT_SOURCE_DIR}/SDL2-2.26.2/x86_64-w64-mingw32/include)
+include_directories(${SDL2_INCLUDE_DIR}
+        include/
+        ${PROJECT_SOURCE_DIR}/SDL2-2.26.2/x86_64-w64-mingw32/include
+        ${PROJECT_SOURCE_DIR}/OpenCL-SDK/external/OpenCL-Headers )
 
 
 add_executable(Fractales
@@ -24,4 +28,4 @@ add_executable(Fractales
         src/main.c
         src/screen_handling.c)
 
-target_link_libraries(Fractales ${SDL2_LIBRARY})
+target_link_libraries(Fractales ${SDL2_LIBRARY} ${OpenCL_LIBRARY})
