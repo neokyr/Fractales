@@ -196,13 +196,17 @@ void handleEvents(SDL_Event *event, bool *gameRunning, t_range *range, SDL_Windo
 				double ny = (double) y * range_y / surf->h;
 				double nrange_y = (1 + event->wheel.y * movePercent) * range_y;
 				// printf("the nrange_x is %.2f and the nrange_y is %.2f \n", nrange_x, nrange_y);
-
+				
+				if (nrange_x == 0 || nrange_y == 0){
+					break;
+				}
+				else{
 				range->maxX = (range->minX + nx + (nrange_x/2));
 				range->minX = (range->minX + nx - (nrange_x/2));
 				range->maxY = (range->minY + ny + (nrange_y/2));
 				range->minY = (range->minY + ny - (nrange_y/2));
 				// printf("maxX = %f, nimX = %f, maxY = %f , minY = %f \n", range->maxX,range->minX, range->maxY, range->minY);
-
+				}
 			}
 
             default:
