@@ -26,6 +26,6 @@ add_executable(Fractales
         src/error.c
         src/fractal.c
         src/main.c
-        src/screen_handling.c)
+        src/screen_handling.c include/open_cl.h src/open_cl.c)
 
 target_link_libraries(Fractales ${SDL2_LIBRARY} ${OpenCL_LIBRARY})

@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "../OpenCL-SDK/external/OpenCL-Headers/CL/cl.h"
+#include "open_cl.h"
 
 uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0);
 
@@ -75,16 +76,9 @@ int fractals(SDL_Window *pWindow, t_range range, t_colors colors) {
     double xIncrement = (range.maxX - range.minX) / (double) window_surface->w;
 
     //Setup OpenCL
-    cl_device_id device = 0;
-    cl_context context = 0;
-    cl_int err = 0;
-    cl_context_properties properties=0;
-    cl_platform_id platformId = 0;
-    err = clGetPlatformIDs(1, &platformId, NULL);
-    err = clGetDeviceIDs(platformId, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
-    context = clCreateContext(&properties, 1, &device, NULL, NULL, &err);
-    if(context == NULL) return print_error(ERROR_CANT_ALLOC_MEMORY);
-    cl_command_queue queue = clCreateCommandQueueWithProperties(context, device, (cl_command_queue_properties) 0, &err);
+    t_opencl opencl;
+    int err = clInit(&opencl);
+    if(err !=0) return err;
 
     //Define the kernel
     char* source = {
@@ -99,26 +93,26 @@ int fractals(SDL_Window *pWindow, t_range range, t_colors colors) {
 #define DATA_SIZE (LENGTH * sizeof(float))
 
     //Compile the kernel
-    cl_program program = clCreateProgramWithSource(context, 1, (const char**)&source, NULL, NULL);
+    cl_program program = clCreateProgramWithSource(opencl.context, 1, (const char**)&source, NULL, NULL);
     clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
     cl_kernel kernel = clCreateKernel(program, "calcSin", NULL);
 
     //Create the memory object
-    cl_mem buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, DATA_SIZE, NULL, NULL);
+    cl_mem buffer = clCreateBuffer(opencl.context, CL_MEM_READ_WRITE, DATA_SIZE, NULL, NULL);
 
     //Copy data to the input
-    clEnqueueWriteBuffer(queue, buffer, CL_FALSE, 0, DATA_SIZE, data, 0, NULL, NULL);
+    clEnqueueWriteBuffer(opencl.queue, buffer, CL_FALSE, 0, DATA_SIZE, data, 0, NULL, NULL);
 
     //Execute kernel
     clSetKernelArg(kernel, 0, sizeof(buffer), &buffer);
     size_t global_dimensions[] = {LENGTH,0,0};
-    clEnqueueNDRangeKernel(queue, kernel, 1, NULL, global_dimensions, NULL, 0, NULL, NULL);
+    clEnqueueNDRangeKernel(opencl.queue, kernel, 1, NULL, global_dimensions, NULL, 0, NULL, NULL);
 
     //Read back result
-    clEnqueueReadBuffer(queue, buffer, CL_FALSE, 0, sizeof(cl_float)*LENGTH, data, 0, NULL, NULL);
+    clEnqueueReadBuffer(opencl.queue, buffer, CL_FALSE, 0, sizeof(cl_float)*LENGTH, data, 0, NULL, NULL);
 
     //Wait for everything to finish
-    clFinish(queue);
+    clFinish(opencl.queue);
 
     for (int i = 0; i < LENGTH; ++i) {
         printf("%f\n", data[i]);

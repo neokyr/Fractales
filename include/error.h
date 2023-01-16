@@ -5,6 +5,8 @@
 #ifndef FRACTALES_ERROR_H
 #define FRACTALES_ERROR_H
 
+#include "../OpenCL-SDK/external/OpenCL-Headers/CL/cl.h"
+
 #define ERROR_ARG_NBR 1, "Error: Program require 3 arguments, height, width, fractal type \n", ""
 #define ERROR_SDL_INIT 2, "Can't init SDL: (%)\n", SDL_GetError()
 #define ERROR_SDL_WINDOW_NULL 3, "Can't create window: %\n", SDL_GetError()
@@ -14,6 +16,7 @@
 #define ERROR_CANT_ALLOC_MEMORY 7, "Error: can't allocate memory", ""
 #define ERROR_INCORRECT_TYPE 8, "Error: \"%\" is not an available fractal type\n"
 #define ERROR_OOB_DIMENSIONS 9, "Error: the selected dimensions for the window cannot display on your screen\n", ""
+#define ERROR_OPEN_CL clErrCode, "Error with OpenCL: % \n"
 
 int print_error(int errcode, const char* err_msg, const char* context);
 
