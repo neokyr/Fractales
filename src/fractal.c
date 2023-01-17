@@ -80,43 +80,7 @@ int fractals(SDL_Window *pWindow, t_range range, t_colors colors) {
     int err = clInit(&opencl);
     if(err !=0) return err;
 
-    //Define the kernel
-    char* source = {
-            "kernel void calcSin(global float *data) {\n"
-            "  int id = get_global_id(0);\n"
-            "  data[id] = sin(data[id]);\n"
-            "}\n"
-    };
 
-    float data[] = {10.0, 12.2, 22.34, 33, 44, 22, 15};
-#define LENGTH 7
-#define DATA_SIZE (LENGTH * sizeof(float))
-
-    //Compile the kernel
-    cl_program program = clCreateProgramWithSource(opencl.context, 1, (const char**)&source, NULL, NULL);
-    clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
-    cl_kernel kernel = clCreateKernel(program, "calcSin", NULL);
-
-    //Create the memory object
-    cl_mem buffer = clCreateBuffer(opencl.context, CL_MEM_READ_WRITE, DATA_SIZE, NULL, NULL);
-
-    //Copy data to the input
-    clEnqueueWriteBuffer(opencl.queue, buffer, CL_FALSE, 0, DATA_SIZE, data, 0, NULL, NULL);
-
-    //Execute kernel
-    clSetKernelArg(kernel, 0, sizeof(buffer), &buffer);
-    size_t global_dimensions[] = {LENGTH,0,0};
-    clEnqueueNDRangeKernel(opencl.queue, kernel, 1, NULL, global_dimensions, NULL, 0, NULL, NULL);
-
-    //Read back result
-    clEnqueueReadBuffer(opencl.queue, buffer, CL_FALSE, 0, sizeof(cl_float)*LENGTH, data, 0, NULL, NULL);
-
-    //Wait for everything to finish
-    clFinish(opencl.queue);
-
-    for (int i = 0; i < LENGTH; ++i) {
-        printf("%f\n", data[i]);
-    }
 
     double y = range.minY;
     for (int i = 0  ; i < window_surface->h; ++i, y+=yIncrement) {

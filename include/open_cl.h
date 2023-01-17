@@ -6,17 +6,22 @@
 #define FRACTALES_OPEN_CL_H
 
 #include "../OpenCL-SDK/external/OpenCL-Headers/CL/cl.h"
+#include <stdbool.h>
+#include "fractal.h"
 
 typedef struct open_cl {
     bool isInit;
+    int old_size;
     cl_platform_id platform;
     cl_device_id device;
     cl_context context;
     cl_command_queue queue;
     cl_program calc_fractals;
     cl_kernel main_kernel;
-    cl_mem results;
-    cl_mem changing_cmx;
+    cl_mem results_mem;
+    cl_int* results;
+    cl_mem changing_mem;
+    t_complex *changing;
     cl_mem unchanging_cmx;
     cl_mem isMandelbrot;
     cl_mem maxIter;
