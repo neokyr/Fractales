@@ -4,7 +4,7 @@
 
 #ifndef JDLV_SCREEN_HANDLING_H
 #define JDLV_SCREEN_HANDLING_H
-#include "fractal.h"
+#include "open_cl.h"
 
 #define QUIT_KEY SDLK_ESCAPE
 #define SWITCH_KEY SDLK_SPACE

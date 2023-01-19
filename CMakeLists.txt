@@ -21,7 +21,6 @@ include_directories(${SDL2_INCLUDE_DIR}
 
 add_executable(Fractales
         include/error.h
-        include/fractal.h
         include/screen_handling.h
         src/error.c
         src/fractal.c

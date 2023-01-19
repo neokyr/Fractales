@@ -7,7 +7,7 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include "../include/screen_handling.h"
-#include "fractal.h"
+#include "open_cl.h"
 
 #define movePercent 0.02
 

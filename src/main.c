@@ -4,12 +4,16 @@
 
 #include "error.h"
 #include "screen_handling.h"
-#include "fractal.h"
+#include "open_cl.h"
 
 int main(int argc, char **argv)
 {
 	if(argc == 4)
 	{
+#ifdef __linux__
+        setenv("SDL_VIDEODRIVER", "x11", 1);
+#endif
+
 		if(SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
 			return print_error(ERROR_SDL_INIT);
@@ -33,9 +37,6 @@ int main(int argc, char **argv)
 		{
 			if(strcmp(argv[3], "Mandelbrot") == 0 || strcmp(argv[3], "Julia") == 0)
 			{
-#ifdef __linux__
-                setenv("SDL_VIDEODRIVER", "x11", 1);
-#endif
 				SDL_Window *window = SDL_CreateWindow("Fractales", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_RESIZABLE);
 				if(!window)
 				{
@@ -46,7 +47,7 @@ int main(int argc, char **argv)
 				t_range range;
 				range.isMandelbrot = strcmp(argv[3], "Mandelbrot") == 0;
 				range.maxDeviation = 4;
-				range.maxIter = 500;
+				range.maxIter = 200;
                 t_complex unchanging;
                 if(range.isMandelbrot) {
                     range.maxX = 1;

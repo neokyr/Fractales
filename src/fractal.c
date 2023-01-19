@@ -1,17 +1,10 @@
 //
 // Created by pad on 1/10/23.
 //
-
-#include "../include/fractal.h"
-#include "../include/screen_handling.h"
-#include "../include/error.h"
-#include <stdbool.h>
-#include <stdio.h>
-#include <math.h>
-#include "../OpenCL-SDK/external/OpenCL-Headers/CL/cl.h"
+#include "screen_handling.h"
+#include "error.h"
 #include "open_cl.h"
 
-uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0);
 
 uint32_t get_linear_interpolation(t_range range, t_colors colors, int nb_iter_dev){
 
@@ -104,7 +97,7 @@ int fractals(SDL_Window *pWindow, t_range range, t_colors colors) {
 t_complex square(t_complex nb) {
     t_complex result;
 
-    result.real = nb.real * nb.real -(nb.img * nb.img);
+    result.real = nb.real * nb.real - (nb.img * nb.img);
     result.img = 2 * nb.real * nb.img;
 
     return result;

@@ -3,11 +3,10 @@
 //
 #include "open_cl.h"
 #include "error.h"
-#include "fractal.h"
 
 char *getSource() {
     return
-            "typedef struct {\n"
+            "typedef struct s_complex {\n"
             "  double real;\n"
             "  double img;\n"
             "} t_complex; \n"
@@ -40,6 +39,7 @@ char *getSource() {
             "    z.img = zSqr.img + c.img;\n"
             "    if(fabs(z.real + z.img) > maxDeviation) break;\n"
             "  }\n"
+            "  //ns[id] = id % maxIter;\n"
             "  ns[id] = i;\n"
             "}\n";
 }
