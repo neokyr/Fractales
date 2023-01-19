@@ -61,14 +61,11 @@ typedef struct open_cl {
     cl_int* results;
     cl_mem changing_mem;
     t_complex *changing;
-    cl_mem unchanging_cmx;
-    cl_mem isMandelbrot;
-    cl_mem maxIter;
-    cl_mem maxDeviation;
 } t_opencl;
 
 int clInit(t_opencl* opencl);
 
+int clDestroy(t_opencl* opencl);
 
 int findDeviation(t_opencl *opencl, t_range *range, SDL_Surface surface);
 

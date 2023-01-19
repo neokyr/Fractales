@@ -55,11 +55,7 @@ int clInit(t_opencl *opencl) {
     opencl->queue = NULL;
     opencl->calc_fractals = NULL;
     opencl->main_kernel = NULL;
-    opencl->maxIter = NULL;
-    opencl->maxDeviation = NULL;
-    opencl->isMandelbrot = NULL;
     opencl->changing_mem = NULL;
-    opencl->unchanging_cmx = NULL;
     opencl->results_mem = NULL;
     opencl->results = NULL;
     opencl->changing = NULL;
@@ -97,7 +93,7 @@ int clInit(t_opencl *opencl) {
     return 0;
 }
 
-int re_init_buffer(cl_mem *buffer, t_opencl opencl, size_t size, void *host_ptr, cl_mem_flags flags) {
+int re_init_buffer(cl_mem *buffer, t_opencl opencl, size_t size, void *pData, cl_mem_flags flags) {
     cl_int clErrCode = 0;
     if (*buffer != NULL) {
         clErrCode = clReleaseMemObject(*buffer);
@@ -105,22 +101,26 @@ int re_init_buffer(cl_mem *buffer, t_opencl opencl, size_t size, void *host_ptr,
             return print_error(ERROR_OPEN_CL, "Can't delete result buffer");
         *buffer = NULL;
     }
-    *buffer = clCreateBuffer(opencl.context, flags, size, host_ptr, &clErrCode);
+    *buffer = clCreateBuffer(opencl.context, flags, size, NULL, &clErrCode);
     if (*buffer == NULL) return print_error(ERROR_OPEN_CL, "Can't create result buffer");
 
     if(flags & CL_MEM_READ_ONLY || flags & CL_MEM_READ_WRITE ){
-        clErrCode = clEnqueueReadBuffer(opencl.queue, *buffer,
-                                        CL_FALSE, 0,
-                                        size, host_ptr,
+        void* mem = malloc(size);
+        memcpy(mem, pData, size);
+        clErrCode = clEnqueueWriteBuffer(opencl.queue, *buffer,
+                                        CL_TRUE, 0,
+                                        size, mem,
                                         0, NULL, NULL);
+        free(mem);
         if(clErrCode != CL_SUCCESS) return print_error(ERROR_OPEN_CL, "Can't enqueue buffer read");
+
     }
 
     return 0;
 }
 
 
-int passArgs(t_opencl *opencl, t_range *range, SDL_Surface surface) {
+int findDeviation(t_opencl *opencl, t_range *range, SDL_Surface surface) {
     cl_int clErrCode = 0;
     int size = surface.h * surface.w;
 
@@ -144,8 +144,8 @@ int passArgs(t_opencl *opencl, t_range *range, SDL_Surface surface) {
 
     clErrCode = re_init_buffer(&(opencl->results_mem),
                                *opencl,
-                               sizeof(int) * size, &(opencl->results),
-                               CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY);
+                               sizeof(cl_int) * size, &(opencl->results),
+                               CL_MEM_WRITE_ONLY);
     if (clErrCode != 0) return clErrCode;
 
 
@@ -159,7 +159,6 @@ int passArgs(t_opencl *opencl, t_range *range, SDL_Surface surface) {
         for (int j = 0; j < surface.w; ++j, x += xIncrement) {
             opencl->changing[i * surface.w + j].real = x;
             opencl->changing[i * surface.w + j].img = y;
-
         }
     }
 
@@ -170,56 +169,59 @@ int passArgs(t_opencl *opencl, t_range *range, SDL_Surface surface) {
                                CL_MEM_READ_ONLY | CL_MEM_HOST_WRITE_ONLY);
     if (clErrCode != 0) return clErrCode;
 
-    clErrCode = re_init_buffer(&(opencl->unchanging_cmx),
+/*    clErrCode = re_init_buffer(&(opencl->unchanging_cmx),
                                *opencl,
                                sizeof(t_complex),
                                &(range->unchanging),
-                               CL_MEM_READ_ONLY);
+                               CL_MEM_READ_ONLY | CL_MEM_HOST_READ_ONLY);
     if (clErrCode != 0) return clErrCode;
 
     clErrCode = re_init_buffer(&(opencl->isMandelbrot),
                                *opencl,
-                               sizeof(t_complex),
+                               sizeof(int),
                                &(range->unchanging),
-                               CL_MEM_READ_ONLY);
+                               CL_MEM_READ_ONLY | CL_MEM_HOST_READ_ONLY);
     if (clErrCode != 0) return clErrCode;
 
     clErrCode = re_init_buffer(&(opencl->maxDeviation),
                                *opencl,
-                               sizeof(t_complex),
+                               sizeof(float),
                                &(range->maxDeviation),
-                               CL_MEM_READ_ONLY);
+                               CL_MEM_READ_ONLY | CL_MEM_HOST_READ_ONLY);
     if (clErrCode != 0) return clErrCode;
 
     clErrCode = re_init_buffer(&(opencl->maxIter),
                                *opencl,
-                               sizeof(t_complex),
+                               sizeof(int),
                                &(range->maxIter),
                                CL_MEM_READ_ONLY);
-    if (clErrCode != 0) return clErrCode;
+    if (clErrCode != 0) return clErrCode;*/
+
+    cl_mem result = opencl->results_mem;
+    cl_mem changing = opencl->changing_mem;
 
     clErrCode = clSetKernelArg(opencl->main_kernel, 0,
-                               sizeof(opencl->results_mem), &opencl->results_mem);
+                               sizeof(result), &opencl->results_mem);
     if(clErrCode != 0) return print_error(ERROR_OPEN_CL, "Can't init arg0");
 
     clErrCode = clSetKernelArg(opencl->main_kernel, 1,
-                               sizeof(opencl->changing_mem), &opencl->changing_mem);
+                               sizeof(changing) , &opencl->changing_mem);
     if(clErrCode != 0) return print_error(ERROR_OPEN_CL, "Can't init arg1");
 
     clErrCode = clSetKernelArg(opencl->main_kernel, 2,
-                               sizeof(opencl->unchanging_cmx), &opencl->unchanging_cmx);
+                               sizeof(t_complex), &(range->unchanging));
     if(clErrCode != 0) return print_error(ERROR_OPEN_CL, "Can't init arg2");
 
     clErrCode = clSetKernelArg(opencl->main_kernel, 3,
-                               sizeof(opencl->isMandelbrot), &opencl->isMandelbrot);
+                               sizeof(int), &(range->isMandelbrot));
     if(clErrCode != 0) return print_error(ERROR_OPEN_CL, "Can't init arg3");
 
     clErrCode = clSetKernelArg(opencl->main_kernel, 4,
-                               sizeof(opencl->maxDeviation), &opencl->maxDeviation);
+                               sizeof(float), &range->maxDeviation);
     if(clErrCode != 0) return print_error(ERROR_OPEN_CL, "Can't init arg4");
 
     clErrCode = clSetKernelArg(opencl->main_kernel, 5,
-                               sizeof(opencl->maxIter), &opencl->maxIter);
+                               sizeof(int), &range->maxIter);
     if(clErrCode != 0) return print_error(ERROR_OPEN_CL, "Can't init arg5");
 
 

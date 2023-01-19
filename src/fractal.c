@@ -6,88 +6,62 @@
 #include "open_cl.h"
 
 
-uint32_t get_linear_interpolation(t_range range, t_colors colors, int nb_iter_dev){
+uint32_t get_linear_interpolation(int max, t_colors colors, int nb_iter_dev) {
 
 
-	double offset_norm = (nb_iter_dev % (range.maxIter / (colors.number_of_color -1 )));
-	//	printf("%d %% %d / %d = %f\n",nb_iter_dev, range.maxIter, (colors.number_of_color-1), offset_norm);
-	offset_norm = offset_norm / (((double)range.maxIter / (double)(colors.number_of_color -1)));
-	// printf("%f\n", offset_norm);
-	int index_base_color = ((nb_iter_dev * colors.number_of_color )/ (range.maxIter+1));
-	uint32_t color_1 = colors.palette[index_base_color];
-	
+    double offset_norm = (nb_iter_dev % (max / (colors.number_of_color - 1)));
+    //	printf("%d %% %d / %d = %f\n",nb_iter_dev, range.maxIter, (colors.number_of_color-1), offset_norm);
+    offset_norm = offset_norm / (((double) max / (double) (colors.number_of_color - 1)));
+    // printf("%f\n", offset_norm);
+    int index_base_color = ((nb_iter_dev * (colors.number_of_color-1)) / max);
+    uint32_t color_1 = colors.palette[index_base_color];
 
-	if ( nb_iter_dev == range.maxIter ){
-		return(color_1);
-	}	
-	else {
-	
-	
-		uint32_t color_2 = colors.palette[index_base_color + 1];
-        uint32_t color_3;
-		for (int i = 0; i < 4; i++){
-			/*((char*) &color_1)[i] = ceil( ((char*) &color_1)[i] * (1 - offset_norm));
-			((char*) &color_2)[i] = ceil( ((char*) &color_2)[i] * offset_norm);
-            ((char*) &color_3)[i] = ((char*) &color_1)[i] + ((char*) &color_2)[i];*/
-            double y0 = ((char*) &color_1)[i];
-            double y1 = ((char*) &color_2)[i];
-            double x0 = index_base_color;
-            double x1 = index_base_color+1;
-            double xp = (double) nb_iter_dev * (double) (colors.number_of_color -1) / (double) range.maxIter;
 
-            double yp = y0 + ((y1-y0) / (x1-x0)) * (xp -x0);
-
-            ((char*) &color_3)[i] = floor(yp);
-		}
-		return(color_3);
-	}
-}
-
-uint32_t solve(t_complex c, t_range range, t_colors colors, t_complex z0) {
-    int i;
-    t_complex sqZ, z = z0;
-    for (i = 0; i < range.maxIter; i++) {
-        sqZ = square(z);
-        //Zn+1 = Zn^2 + c
-        z.real = sqZ.real + c.real;
-        z.img = sqZ.img + c.img;
-
-        if(fabs(z.real + z.img) > range.maxDeviation) break;
-    }
-
-    if(!colors.linear_interpolation) {
-        return colors.palette[(i*colors.number_of_color)/(range.maxIter+1)];
+    if (nb_iter_dev == max) {
+        return (color_1);
     } else {
-        return get_linear_interpolation(range, colors, i);
+
+
+        uint32_t color_2 = colors.palette[index_base_color + 1];
+        uint32_t color_3;
+        for (int i = 0; i < 4; i++) {
+            /*double a = ((char*) &color_1)[i] * (1 - offset_norm);
+            double b = ((char*) &color_2)[i] * offset_norm;
+            ((char*) &color_3)[i] = floor(a+b);*/
+            double y0 = ((char *) &color_1)[i];
+            double y1 = ((char *) &color_2)[i];
+            double x0 = index_base_color;
+            double x1 = index_base_color + 1;
+            double xp = (double) nb_iter_dev * (double) (colors.number_of_color - 1) / (double) max;
+
+            double yp = y0 + ((y1 - y0) / (x1 - x0)) * (xp - x0);
+
+            ((char *) &color_3)[i] = yp;
+        }
+        return (color_3);
     }
 }
 
-int fractals(SDL_Window *pWindow, t_range range, t_colors colors) {
-    SDL_Surface* window_surface = SDL_GetWindowSurface(pWindow);
-    if(window_surface == NULL) return print_error(ERROR_SDL_NO_SURFACE);
-    double yIncrement = (range.maxY - range.minY) / (double) window_surface->h;
-    double xIncrement = (range.maxX - range.minX) / (double) window_surface->w;
-
-    //Setup OpenCL
-    t_opencl opencl;
-    int err = clInit(&opencl);
-    if(err !=0) return err;
+uint32_t solve(cl_int num, int max, t_colors colors) {
 
 
+    if (!colors.linear_interpolation) {
+        return colors.palette[num * (colors.number_of_color - 1)  /max];
+    } else {
+        return get_linear_interpolation(max, colors, num);
+    }
+}
 
-    double y = range.minY;
-    for (int i = 0  ; i < window_surface->h; ++i, y+=yIncrement) {
-        double x = range.minX;
-        for (int j = 0; j < window_surface->w; ++j, x+=xIncrement) {
-            t_complex curr;
-            curr.real=x;
-            curr.img =y;
+int fractals(SDL_Window *pWindow, t_range range, t_colors colors, t_opencl *pCl) {
+    SDL_Surface *window_surface = SDL_GetWindowSurface(pWindow);
+    if (window_surface == NULL) return print_error(ERROR_SDL_NO_SURFACE);
 
-            // Formula is Zn+1 = Zn^2 + c
-            if(range.isMandelbrot) // Mandelbrot has a fixed z_0 and changing c
-                put_pixel(window_surface->pixels, j, i, solve(curr, range, colors, range.unchanging), window_surface->w);
-            else // Julia has a fixed c and changing z_0
-                put_pixel(window_surface->pixels, j, i, solve(range.unchanging, range, colors, curr), window_surface->w);
+    int err = findDeviation(pCl, &range, *window_surface);
+    if(err != 0 ) return err;
+
+    for (int i = 0; i < window_surface->w; ++i) {
+        for (int j = 0; j < window_surface->h; ++j) {
+            put_pixel(window_surface->pixels, i, j, solve(pCl->results[j* window_surface->w + i], range.maxIter, colors), window_surface->w);
         }
     }
 

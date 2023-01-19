@@ -86,13 +86,19 @@ int main(int argc, char **argv)
                 int current_palette = 0;
 				bool isVariationActive = false;
 				bool isFullScreen = false;
+
+                t_opencl opencl;
+                int err = clInit(&opencl);
+                if(err != 0) return err;
+
 				while(keep_window_open)
 				{
-					int err = fractals(window, range, palettes[current_palette]);
+                    err = fractals(window, range, palettes[current_palette], &opencl);
 					if (err != 0) {
 						SDL_Quit();
 						return err;
 					}
+
 					SDL_UpdateWindowSurface(window);
                     handleEvents(&e, &keep_window_open, &range, window, &isVariationActive, &palettes[current_palette], &current_palette, &isFullScreen);
 					SDL_Delay(16);
