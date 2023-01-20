@@ -169,33 +169,6 @@ int findDeviation(t_opencl *opencl, t_range *range, SDL_Surface surface) {
                                CL_MEM_READ_ONLY | CL_MEM_HOST_WRITE_ONLY);
     if (clErrCode != 0) return clErrCode;
 
-/*    clErrCode = re_init_buffer(&(opencl->unchanging_cmx),
-                               *opencl,
-                               sizeof(t_complex),
-                               &(range->unchanging),
-                               CL_MEM_READ_ONLY | CL_MEM_HOST_READ_ONLY);
-    if (clErrCode != 0) return clErrCode;
-
-    clErrCode = re_init_buffer(&(opencl->isMandelbrot),
-                               *opencl,
-                               sizeof(int),
-                               &(range->unchanging),
-                               CL_MEM_READ_ONLY | CL_MEM_HOST_READ_ONLY);
-    if (clErrCode != 0) return clErrCode;
-
-    clErrCode = re_init_buffer(&(opencl->maxDeviation),
-                               *opencl,
-                               sizeof(float),
-                               &(range->maxDeviation),
-                               CL_MEM_READ_ONLY | CL_MEM_HOST_READ_ONLY);
-    if (clErrCode != 0) return clErrCode;
-
-    clErrCode = re_init_buffer(&(opencl->maxIter),
-                               *opencl,
-                               sizeof(int),
-                               &(range->maxIter),
-                               CL_MEM_READ_ONLY);
-    if (clErrCode != 0) return clErrCode;*/
 
     cl_mem result = opencl->results_mem;
     cl_mem changing = opencl->changing_mem;
@@ -239,4 +212,54 @@ int findDeviation(t_opencl *opencl, t_range *range, SDL_Surface surface) {
     clFinish(opencl->queue);
 
     return 0;
+}
+
+int clDestroy(t_opencl* opencl){
+    if(opencl->isInit) {
+        if(opencl->changing_mem != NULL) {
+            clReleaseMemObject(opencl->changing_mem);
+            opencl->changing_mem = NULL;
+        }
+        if(opencl->changing != NULL) {
+            free(opencl->changing);
+            opencl->changing = NULL;
+        }
+
+        if(opencl->results_mem != NULL) {
+            clReleaseMemObject(opencl->results_mem);
+            opencl->results_mem = NULL;
+        }
+        if(opencl->results != NULL) {
+            free(opencl->results);
+            opencl->results = NULL;
+        }
+
+        if(opencl->calc_fractals != NULL) {
+            clReleaseProgram(opencl->calc_fractals);
+            opencl->calc_fractals = NULL;
+        }
+
+        if(opencl->main_kernel != NULL) {
+            clReleaseKernel(opencl->main_kernel);
+            opencl->main_kernel = NULL;
+        }
+
+        if(opencl->queue != NULL) {
+            clReleaseCommandQueue(opencl->queue);
+            opencl->queue = NULL;
+        }
+
+        if(opencl->context != NULL) {
+            clReleaseContext(opencl->context);
+            opencl->context = NULL;
+        }
+
+        if(opencl->device != NULL) {
+            clReleaseDevice(opencl->device);
+            opencl->device = NULL;
+        }
+
+        opencl->isInit = false;
+        opencl->old_size = -1;
+    }
 }

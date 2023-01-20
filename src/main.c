@@ -96,6 +96,7 @@ int main(int argc, char **argv)
                     err = fractals(window, range, palettes[current_palette], &opencl);
 					if (err != 0) {
 						SDL_Quit();
+                        clDestroy(&opencl);
 						return err;
 					}
 
@@ -103,6 +104,9 @@ int main(int argc, char **argv)
                     handleEvents(&e, &keep_window_open, &range, window, &isVariationActive, &palettes[current_palette], &current_palette, &isFullScreen);
 					SDL_Delay(16);
 				}
+
+                clDestroy(&opencl);
+                SDL_Quit();
 			}
 			else
 			{
